@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تعديل الحساب</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="center">
+<div class="card form-card">
+<h1>✏️ تعديل الحساب</h1>
+<form method="post">
+<input name="name" value="{{ user.name }}" placeholder="الاسم" required>
+<input name="father_name" value="{{ user.father_name }}" placeholder="اسم الأب" required>
+<button class="btn primary">حفظ</button>
+</form>
+<a href="/profile">رجوع</a>
+</div>
+</body>
+</html>

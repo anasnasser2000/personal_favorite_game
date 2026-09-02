@@ -1,0 +1,33 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إنشاء حساب</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="box">
+<h1>إنشاء حساب ❤️</h1>
+
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+<div class="error">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
+<form method="post">
+<input name="username" placeholder="اسم المستخدم" required>
+<input name="name" placeholder="الاسم" required>
+<input name="father_name" placeholder="اسم الأب" required>
+<input type="email" name="email" placeholder="الإيميل" required>
+<input type="password" name="password" placeholder="كلمة السر" required>
+<input type="password" name="confirm_password" placeholder="تأكيد كلمة السر" required>
+<button class="btn" type="submit">إنشاء الحساب</button>
+</form>
+
+<a href="/login">عندي حساب بالفعل</a>
+</div>
+</body>
+</html>

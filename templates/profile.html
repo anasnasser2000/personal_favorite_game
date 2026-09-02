@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>البروفايل 👤</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+.profile-page{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+
+.profile-head{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.avatar-box{
+    width:110px;
+    height:110px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.15);
+    font-size:55px;
+    border:3px solid rgba(255,255,255,.6);
+}
+
+.avatar-box img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.profile-id{
+    opacity:.8;
+    font-size:14px;
+}
+
+.profile-card{
+    background:rgba(255,255,255,.10);
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:16px;
+    backdrop-filter:blur(8px);
+}
+
+.profile-card h2{
+    margin-top:0;
+}
+
+.profile-field{
+    margin-bottom:13px;
+}
+
+.profile-field label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+.profile-field input{
+    width:100%;
+    box-sizing:border-box;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.25);
+}
+
+.locked{
+    opacity:.65;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.stat{
+    text-align:center;
+    padding:15px 8px;
+    border-radius:15px;
+    background:rgba(255,255,255,.08);
+}
+
+.stat strong{
+    display:block;
+    font-size:24px;
+}
+
+.stat small{
+    opacity:.8;
+}
+
+.profile-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.profile-actions a,
+.profile-actions button{
+    text-decoration:none;
+}
+
+.flash{
+    text-align:center;
+    padding:10px;
+    margin-bottom:15px;
+    border-radius:12px;
+    background:rgba(255,255,255,.12);
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="profile-page">
+
+    <div class="profile-head">
+
+        <div class="avatar-box">
+
+            {% if profile_data and profile_data.avatar_filename %}
+                <img
+                    src="{{ url_for('static', filename='uploads/profile/' + profile_data.avatar_filename) }}"
+                    alt="صورة البروفايل">
+            {% else %}
+                👤
+            {% endif %}
+
+        </div>
+
+        <h1>👤 بروفايلي</h1>
+
+        <div class="profile-id">
+            ID اللاعب: {{ user.player_id }}
+        </div>
+
+    </div>
+
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="flash">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+
+    <div class="profile-card">
+
+        <h2>✏️ تعديل البيانات</h2>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data">
+
+            <div class="profile-field">
+
+                <label>الصورة</label>
+
+                <input
+                    type="file"
+                    name="avatar"
+                    accept="image/png,image/jpeg,image/webp,image/gif">
+
+            </div>
+
+
+            <div class="profile-field">
+
+                <label>الاسم</label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ user.name }}"
+                    required>
+
+            </div>
+
+
+            <div class="profile-field">
+
+                <label>اسم الأب</label>
+
+                <input
+                    type="text"
+                    name="father_name"
+                    value="{{ user.father_name }}"
+                    required>
+
+            </div>
+
+
+            <div class="profile-field">
+
+                <label>الإيميل</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ user.email }}"
+                    required>
+
+            </div>
+
+
+            <div class="profile-field">
+
+                <label>اسم المستخدم 🔒</label>
+
+                <input
+                    class="locked"
+                    type="text"
+                    value="@{{ user.username }}"
+                    disabled>
+
+            </div>
+
+
+            <div class="profile-field">
+
+                <label>ID اللاعب 🔒</label>
+
+                <input
+                    class="locked"
+                    type="text"
+                    value="{{ user.player_id }}"
+                    disabled>
+
+            </div>
+
+
+            <button
+                class="btn"
+                type="submit">
+
+                💾 حفظ التغييرات
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="profile-card">
+
+        <h2>📊 إحصائياتي</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat">
+                <strong>{{ friend_count }}</strong>
+                <small>الأصدقاء</small>
+            </div>
+
+            <div class="stat">
+                <strong>{{ total_points }}</strong>
+                <small>النقاط</small>
+            </div>
+
+            <div class="stat">
+                <strong>{{ answered }}</strong>
+                <small>تمت الإجابة</small>
+            </div>
+
+            <div class="stat">
+                <strong>{{ ten_points }}</strong>
+                <small>إجابات 10</small>
+            </div>
+
+            <div class="stat">
+                <strong>{{ zero_points }}</strong>
+                <small>إجابات 0</small>
+            </div>
+
+            <div class="stat">
+                <strong>{{ skipped }}</strong>
+                <small>تخطي</small>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-actions">
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('home') }}">
+            🏠 الرئيسية
+        </a>
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('friends') }}">
+            👥 الأصدقاء
+        </a>
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('logout') }}">
+            🚪 تسجيل الخروج
+        </a>
+
+    </div>
+
+</div>
+
+
+<div style="text-align:center;margin:15px;">
+<a class="secondary-btn" href="/notifications">
+🔔 الإشعارات
+</a>
+</div>
+
+</body>
+</html>

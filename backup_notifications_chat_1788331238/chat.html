@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1">
+
+<title>الدردشة 💬</title>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+.chat-page{
+    max-width:800px;
+    margin:auto;
+    padding:15px;
+}
+
+.chat-title{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.chat-friends{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:5px;
+    margin-bottom:12px;
+}
+
+.chat-friend{
+    text-decoration:none;
+    min-width:110px;
+    padding:10px;
+    border-radius:15px;
+    text-align:center;
+    background:rgba(255,255,255,.10);
+}
+
+.chat-friend.active{
+    background:rgba(255,255,255,.25);
+}
+
+.chat-box{
+    height:55vh;
+    overflow-y:auto;
+    padding:15px;
+    border-radius:20px;
+    background:rgba(255,255,255,.08);
+}
+
+.msg{
+    max-width:78%;
+    padding:10px 13px;
+    margin:7px 0;
+    border-radius:16px;
+    word-wrap:break-word;
+}
+
+.msg.mine{
+    margin-right:auto;
+    background:rgba(255,255,255,.22);
+    border-bottom-right-radius:5px;
+}
+
+.msg.theirs{
+    margin-left:auto;
+    background:rgba(255,255,255,.12);
+    border-bottom-left-radius:5px;
+}
+
+.empty-chat{
+    text-align:center;
+    opacity:.7;
+    padding:40px 10px;
+}
+
+.chat-form{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.chat-form input{
+    flex:1;
+    min-width:0;
+}
+
+.chat-form button{
+    width:auto;
+    padding:12px 18px;
+}
+
+.chat-nav{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="chat-page">
+
+    <div class="chat-title">
+
+        <h1>💬 الدردشة</h1>
+
+        {% if selected_user %}
+
+            <p>
+                تتكلم توا مع
+                <strong>
+                    {{ selected_user.name }}
+                </strong>
+            </p>
+
+        {% else %}
+
+            <p>
+                اختار صديق باش تبدأ الدردشة
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if friends %}
+
+    <div class="chat-friends">
+
+        {% for friend in friends %}
+
+            <a
+                class="chat-friend
+                {% if selected_user and friend.id == selected_user.id %}
+                active
+                {% endif %}"
+                href="{{ url_for('private_chat', user_id=friend.id) }}">
+
+                <div>👤</div>
+
+                <strong>
+                    {{ friend.name }}
+                </strong>
+
+                <small>
+                    @{{ friend.username }}
+                </small>
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+        <div class="chat-box">
+
+            <div class="empty-chat">
+
+                <h2>👥 مافيش أصدقاء توا</h2>
+
+                <p>
+                    أضف صديق أولاً باش تقدر تدردش معاه.
+                </p>
+
+                <a
+                    class="btn"
+                    href="{{ url_for('friends') }}">
+                    ➕ إضافة صديق
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if selected_user %}
+
+    <div
+        class="chat-box"
+        id="chatBox">
+
+        {% if messages %}
+
+            {% for m in messages %}
+
+                <div
+                    class="msg
+                    {% if m.sender_id == user.id %}
+                    mine
+                    {% else %}
+                    theirs
+                    {% endif %}"
+                    data-message-id="{{ m.id }}">
+
+                    {{ m.message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div
+                class="empty-chat"
+                id="emptyMessage">
+
+                💬 مافيش رسائل بيناتكم توا.
+                <br>
+                ابعث أول رسالة ❤️
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <form
+        class="chat-form"
+        id="chatForm">
+
+        <input
+            id="messageInput"
+            type="text"
+            maxlength="1000"
+            autocomplete="off"
+            placeholder="اكتب رسالتك..."
+            required>
+
+        <button
+            class="btn"
+            type="submit">
+
+            إرسال 💌
+
+        </button>
+
+    </form>
+
+    {% endif %}
+
+
+    <div class="chat-nav">
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('home') }}">
+            🏠 الرئيسية
+        </a>
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('profile') }}">
+            👤 البروفايل
+        </a>
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('friends') }}">
+            👥 الأصدقاء
+        </a>
+
+    </div>
+
+</div>
+
+
+{% if selected_user %}
+
+<script>
+
+const receiverId = {{ selected_user.id }};
+const currentUserId = {{ user.id }};
+
+const chatBox =
+    document.getElementById("chatBox");
+
+const form =
+    document.getElementById("chatForm");
+
+const input =
+    document.getElementById("messageInput");
+
+
+function scrollChat(){
+
+    if(chatBox){
+        chatBox.scrollTop =
+            chatBox.scrollHeight;
+    }
+
+}
+
+
+function addMessage(message){
+
+    if(!chatBox){
+        return;
+    }
+
+    const empty =
+        document.getElementById("emptyMessage");
+
+    if(empty){
+        empty.remove();
+    }
+
+    if(
+        document.querySelector(
+            '[data-message-id="' +
+            message.id +
+            '"]'
+        )
+    ){
+        return;
+    }
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "msg " +
+        (
+            message.sender_id === currentUserId
+            ? "mine"
+            : "theirs"
+        );
+
+    div.dataset.messageId =
+        message.id;
+
+    div.textContent =
+        message.message;
+
+    chatBox.appendChild(div);
+
+    scrollChat();
+
+}
+
+
+async function loadMessages(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/chat/" + receiverId,
+                {
+                    cache:"no-store"
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if(!result.ok){
+            return;
+        }
+
+        result.messages.forEach(
+            addMessage
+        );
+
+    }catch(error){
+
+        // تجاهل أخطاء التحديث المؤقتة
+
+    }
+
+}
+
+
+if(form){
+
+    form.addEventListener(
+        "submit",
+        async function(e){
+
+            e.preventDefault();
+
+            const message =
+                input.value.trim();
+
+            if(!message){
+                return;
+            }
+
+            input.disabled = true;
+
+            try{
+
+                const response =
+                    await fetch(
+                        "/api/chat/send",
+                        {
+                            method:"POST",
+                            headers:{
+                                "Content-Type":
+                                "application/json"
+                            },
+                            body:JSON.stringify({
+                                receiver_id:
+                                receiverId,
+                                message:
+                                message
+                            })
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if(result.ok){
+
+                    addMessage(
+                        result.message
+                    );
+
+                    input.value = "";
+
+                    input.focus();
+
+                }else{
+
+                    alert(
+                        result.message ||
+                        "صار خطأ في إرسال الرسالة"
+                    );
+
+                }
+
+            }catch(error){
+
+                alert(
+                    "تعذر الاتصال بالسيرفر"
+                );
+
+            }finally{
+
+                input.disabled = false;
+
+            }
+
+        }
+    );
+
+}
+
+
+scrollChat();
+
+loadMessages();
+
+setInterval(
+    loadMessages,
+    2000
+);
+
+</script>
+
+{% endif %}
+
+
+<div style="text-align:center;margin:15px;">
+<a class="secondary-btn" href="/notifications">
+🔔 الإشعارات
+</a>
+</div>
+
+</body>
+</html>

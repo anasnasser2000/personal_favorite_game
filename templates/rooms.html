@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>الغرف ❤️</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="top-title">
+        <h1>🏠 الغرف</h1>
+        <p>أنشئ غرفة 1 VS 1 أو ادخل بكود الغرفة</p>
+    </div>
+
+    <div class="room-box">
+
+        <h2>➕ إنشاء غرفة</h2>
+
+        <form method="POST" action="{{ url_for('create_room') }}">
+
+            <label>القسم</label>
+
+            <select name="category" required>
+                <option value="single">🎮 لعب بروحي — لاعب واحد</option>
+                <option value="couples">مرتبطين</option>
+                <option value="friends">أصدقاء</option>
+                <option value="siblings">إخوة</option>
+                <option value="engaged">مخطوبين</option>
+                <option value="married">متزوجين</option>
+            </select>
+
+            <label>الكرت</label>
+
+            <select name="card_number" required>
+                {% for i in range(1, 6) %}
+                    <option value="{{ i }}">الكرت {{ i }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="main-btn" type="submit">
+                إنشاء الغرفة ❤️
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="room-box">
+
+        <h2>🔑 دخول غرفة</h2>
+
+        <form method="POST" action="{{ url_for('join_room') }}">
+
+            <input
+                type="text"
+                name="room_code"
+                maxlength="6"
+                placeholder="اكتب كود الغرفة"
+                required
+            >
+
+            <div class="join-buttons">
+
+                <button
+                    class="main-btn"
+                    type="submit"
+                    name="role"
+                    value="player"
+                >
+                    🎮 دخول كلاعب
+                </button>
+
+                <button
+                    class="secondary-btn"
+                    type="submit"
+                    name="role"
+                    value="spectator"
+                >
+                    👀 دخول كمشاهد
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {% if rooms %}
+
+    <div class="room-box">
+
+        <h2>📋 غرفي</h2>
+
+        {% for room in rooms %}
+
+        <a
+            class="room-item"
+            href="{{ url_for('room_page', room_code=room.room_code) }}"
+        >
+            <strong>🔐 {{ room.room_code }}</strong>
+            <span>{{ room.category }} — الكرت {{ room.card_number }}</span>
+            <small>{{ room.status }}</small>
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

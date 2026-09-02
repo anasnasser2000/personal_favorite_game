@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>غرفة {{ room.room_code }} ❤️</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#fff5f8;
+    font-family:Arial,Tahoma,sans-serif;
+    color:#272027;
+}
+
+.online-room{
+    width:100%;
+    max-width:680px;
+    margin:auto;
+    padding:15px 13px 35px;
+}
+
+.top{
+    text-align:center;
+    padding:8px 0 12px;
+}
+
+.logo{
+    font-size:42px;
+}
+
+.top h1{
+    margin:3px 0;
+    font-size:25px;
+}
+
+.top p{
+    margin:5px 0;
+    opacity:.65;
+}
+
+.code-box{
+    background:linear-gradient(135deg,#d94f82,#ec79a2);
+    color:white;
+    border-radius:25px;
+    padding:18px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(217,79,130,.25);
+}
+
+.code-label{
+    font-size:13px;
+    opacity:.9;
+}
+
+.code{
+    font-size:32px;
+    font-weight:900;
+    letter-spacing:7px;
+    margin:5px 0 12px;
+}
+
+.code-actions{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+}
+
+.small-btn{
+    border:0;
+    background:white;
+    color:#c13e70;
+    border-radius:13px;
+    padding:10px 14px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.card{
+    background:white;
+    margin-top:14px;
+    padding:17px;
+    border-radius:22px;
+    box-shadow:0 7px 25px rgba(0,0,0,.06);
+}
+
+.players{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.player{
+    padding:14px 10px;
+    border-radius:18px;
+    background:#fafafa;
+    text-align:center;
+    border:2px solid transparent;
+}
+
+.player.active{
+    border-color:#d94f82;
+    background:#fff0f5;
+}
+
+.avatar{
+    font-size:30px;
+}
+
+.name{
+    font-weight:900;
+    margin-top:4px;
+}
+
+.score{
+    color:#d94f82;
+    font-weight:900;
+    font-size:20px;
+    margin-top:4px;
+}
+
+.badge{
+    display:inline-block;
+    margin-top:5px;
+    padding:4px 9px;
+    border-radius:20px;
+    background:#eee;
+    font-size:11px;
+}
+
+.game{
+    display:none;
+}
+
+.progress{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.progress-number{
+    font-weight:900;
+    color:#d94f82;
+}
+
+.question{
+    font-size:21px;
+    line-height:1.7;
+    font-weight:900;
+    text-align:center;
+    padding:18px 8px;
+}
+
+.turn{
+    text-align:center;
+    padding:10px;
+    border-radius:15px;
+    background:#fff0f5;
+    color:#b93668;
+    font-weight:800;
+    margin-bottom:12px;
+}
+
+.answer-area textarea{
+    width:100%;
+    min-height:120px;
+    resize:none;
+    border:2px solid #eee;
+    border-radius:17px;
+    padding:14px;
+    font-size:16px;
+    outline:none;
+    font-family:inherit;
+}
+
+.answer-area textarea:focus{
+    border-color:#d94f82;
+}
+
+.primary{
+    width:100%;
+    border:0;
+    border-radius:16px;
+    padding:15px;
+    margin-top:10px;
+    background:#d94f82;
+    color:white;
+    font-size:17px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.primary:disabled{
+    opacity:.5;
+}
+
+.judging{
+    display:none;
+    text-align:center;
+}
+
+.answer-display{
+    margin:15px 0;
+    padding:18px;
+    background:#fff8fb;
+    border-radius:18px;
+    font-size:18px;
+    line-height:1.6;
+    font-weight:800;
+}
+
+.judge-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.correct{
+    border:0;
+    border-radius:16px;
+    padding:15px;
+    background:#27ae60;
+    color:white;
+    font-size:17px;
+    font-weight:900;
+}
+
+.wrong{
+    border:0;
+    border-radius:16px;
+    padding:15px;
+    background:#e74c3c;
+    color:white;
+    font-size:17px;
+    font-weight:900;
+}
+
+.video-box{
+    display:none;
+    margin-top:15px;
+    text-align:center;
+}
+
+.video-box video{
+    width:100%;
+    max-height:260px;
+    border-radius:18px;
+    background:#111;
+}
+
+.video-result{
+    font-size:21px;
+    font-weight:900;
+    margin:8px 0;
+}
+
+.waiting{
+    text-align:center;
+    padding:30px 10px;
+}
+
+.waiting-icon{
+    font-size:50px;
+}
+
+.finished{
+    display:none;
+    text-align:center;
+}
+
+.final-title{
+    font-size:28px;
+    font-weight:900;
+}
+
+.final-score{
+    font-size:25px;
+    color:#d94f82;
+    font-weight:900;
+    margin:15px;
+}
+
+.status{
+    text-align:center;
+    margin-top:12px;
+    font-size:13px;
+    opacity:.55;
+}
+
+.actions{
+    display:grid;
+    gap:9px;
+    margin-top:14px;
+}
+
+.back{
+    display:block;
+    text-decoration:none;
+    text-align:center;
+    padding:14px;
+    border-radius:16px;
+    background:white;
+    color:#444;
+    font-weight:800;
+}
+
+.leave{
+    width:100%;
+    border:0;
+    padding:14px;
+    border-radius:16px;
+    background:#ffecec;
+    color:#c0392b;
+    font-weight:900;
+}
+
+.notice{
+    text-align:center;
+    padding:15px;
+    border-radius:17px;
+    background:#fff9dc;
+    margin-top:12px;
+    line-height:1.7;
+}
+
+@media(max-width:430px){
+    .question{
+        font-size:19px;
+    }
+
+    .players{
+        gap:7px;
+    }
+
+    .player{
+        padding:11px 5px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="online-room">
+
+    <div class="top">
+        <div class="logo">❤️</div>
+        <h1>سؤالي لي شخصي المفضل</h1>
+        <p>غرفة لعب أونلاين</p>
+    </div>
+
+    <div class="code-box">
+        <div class="code-label">كود الغرفة</div>
+
+        <div class="code" id="roomCode">
+            {{ room.room_code }}
+        </div>
+
+        <div class="code-actions">
+            <button class="small-btn" onclick="copyCode()">
+                📋 نسخ
+            </button>
+
+            <button class="small-btn" onclick="shareRoom()">
+                📤 مشاركة
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="players" id="players">
+            {% for player in players %}
+
+            <div class="player"
+                 data-user="{{ player.user_id }}">
+
+                <div class="avatar">🎮</div>
+
+                <div class="name">
+                    {{ player.name }}
+                    {% if player.user_id == room.creator_id %}
+                        👑
+                    {% endif %}
+                </div>
+
+                <div class="score" id="score-{{ player.user_id }}">
+                    0
+                </div>
+
+                <div class="badge">
+                    اللاعب {{ player.player_slot }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div id="waiting" class="card waiting">
+
+        <div class="waiting-icon">👥</div>
+
+        <h2>في انتظار اللاعب الثاني</h2>
+
+        <p>
+            ابعث كود الغرفة للشخص اللي تبي تلعب معاه.
+        </p>
+
+        <div class="notice">
+            🔄 الصفحة تتحدث تلقائيًا
+        </div>
+
+    </div>
+
+    <div id="game" class="card game">
+
+        <div class="progress">
+
+            <span>🎯 السؤال</span>
+
+            <span class="progress-number">
+                <span id="questionNumber">1</span> / 20
+            </span>
+
+        </div>
+
+        <div class="turn" id="turnText">
+            جاري تحديد الدور...
+        </div>
+
+        <div class="question" id="questionText">
+            جاري تحميل السؤال...
+        </div>
+
+        <div id="answerArea" class="answer-area">
+
+            <textarea
+                id="answerInput"
+                maxlength="500"
+                placeholder="اكتب إجابتك هنا..."
+            ></textarea>
+
+            <button
+                class="primary"
+                id="sendAnswer"
+                onclick="sendAnswer()">
+                ✉️ إرسال الإجابة
+            </button>
+
+        </div>
+
+        <div id="judging" class="judging">
+
+            <div>
+                ✨ إجابة اللاعب:
+            </div>
+
+            <div class="answer-display" id="answerDisplay"></div>
+
+            <strong>
+                هل الإجابة صحيحة؟
+            </strong>
+
+            <div class="judge-buttons">
+
+                <button
+                    class="correct"
+                    onclick="judgeAnswer('10')">
+                    ✅ صح +10
+                </button>
+
+                <button
+                    class="wrong"
+                    onclick="judgeAnswer('0')">
+                    ❌ غلط 0
+                </button>
+
+            </div>
+
+        </div>
+
+        <div id="videoBox" class="video-box">
+
+            <div class="video-result" id="videoResult"></div>
+
+            <video
+                id="answerVideo"
+                controls
+                playsinline
+                preload="auto"
+                controls
+                playsinline>
+            </video>
+
+        </div>
+
+    </div>
+
+    <div id="finished" class="card finished">
+
+        <div class="final-title">
+            🏆 انتهت اللعبة!
+        </div>
+
+        <p>
+            كملتوا الـ20 سؤال ❤️
+        </p>
+
+        <div class="final-score" id="finalScore"></div>
+
+        <div id="winner"></div>
+
+    </div>
+
+    <div class="status" id="connectionStatus">
+        🟢 متصل
+    </div>
+
+    <div class="actions">
+
+        <a
+            class="back"
+            href="{{ url_for('category', slug=room.category) }}">
+            ← الرجوع للقسم
+        </a>
+
+        <form
+            method="POST"
+            action="{{ url_for('leave_room', room_code=room.room_code) }}">
+
+            <button class="leave" type="submit">
+                🚪 مغادرة الغرفة
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+const ROOM_CODE = "{{ room.room_code }}";
+const MY_ID = {{ session["user_id"] }};
+
+let lastPhase = "";
+let lastQuestion = 0;
+let lastResult = null;
+let loading = false;
+
+function copyCode(){
+
+    const code = document.getElementById("roomCode").textContent.trim();
+
+    navigator.clipboard.writeText(code)
+        .then(() => alert("✅ تم نسخ كود الغرفة"))
+        .catch(() => alert("كود الغرفة: " + code));
+}
+
+function shareRoom(){
+
+    const url = window.location.href;
+
+    if(navigator.share){
+
+        navigator.share({
+            title:"سؤالي لي شخصي المفضل ❤️",
+            text:"تعال العب معاي في الغرفة ❤️",
+            url:url
+        }).catch(()=>{});
+
+    }else{
+
+        navigator.clipboard.writeText(url)
+            .then(() => alert("✅ تم نسخ رابط الغرفة"))
+            .catch(() => alert(url));
+
+    }
+}
+
+async function getRoom(){
+
+    try{
+
+        const response = await fetch(
+            "/api/room/" + ROOM_CODE,
+            {
+                cache:"no-store"
+            }
+        );
+
+        if(!response.ok){
+            throw new Error("HTTP " + response.status);
+        }
+
+        const data = await response.json();
+
+        if(!data.ok){
+            throw new Error(data.error || "room error");
+        }
+
+        document.getElementById("connectionStatus").textContent =
+            "🟢 متصل";
+
+        renderRoom(data);
+
+    }catch(error){
+
+        document.getElementById("connectionStatus").textContent =
+            "🔴 مشكلة في الاتصال";
+
+        console.log(error);
+
+    }
+}
+
+function renderRoom(data){
+
+    const room = data.room;
+    const players = data.players || [];
+    const question = data.question;
+
+    updatePlayers(players, room);
+
+    if(room.status === "waiting"){
+
+        document.getElementById("waiting").style.display = "block";
+        document.getElementById("game").style.display = "none";
+        document.getElementById("finished").style.display = "none";
+
+        return;
+    }
+
+    if(room.status === "finished"){
+
+        document.getElementById("waiting").style.display = "none";
+        document.getElementById("game").style.display = "none";
+        document.getElementById("finished").style.display = "block";
+
+        showFinal(players, room);
+
+        return;
+    }
+
+    document.getElementById("waiting").style.display = "none";
+    document.getElementById("game").style.display = "block";
+    document.getElementById("finished").style.display = "none";
+
+    if(!question){
+        return;
+    }
+
+    document.getElementById("questionNumber").textContent =
+        room.current_question;
+
+    document.getElementById("questionText").textContent =
+        question.text;
+
+    renderPhase(data);
+}
+
+function updatePlayers(players, room){
+
+    players.forEach((player,index)=>{
+
+        const score =
+            index === 0
+            ? room.score_player1
+            : room.score_player2;
+
+        const element =
+            document.querySelector(
+                '[data-user="' + player.id + '"]'
+            );
+
+        if(element){
+
+            const scoreElement =
+                element.querySelector(".score");
+
+            if(scoreElement){
+                scoreElement.textContent = score;
+            }
+
+            element.classList.toggle(
+                "active",
+                room.turn_user_id === player.id
+            );
+
+        }
+
+    });
+
+}
+
+function renderPhase(data){
+
+    const room = data.room;
+
+    const answerArea =
+        document.getElementById("answerArea");
+
+    const judging =
+        document.getElementById("judging");
+
+    const answerDisplay =
+        document.getElementById("answerDisplay");
+
+    const turnText =
+        document.getElementById("turnText");
+
+    const myTurn =
+        room.turn_user_id === MY_ID;
+
+    if(room.phase === "answering"){
+
+        judging.style.display = "none";
+        answerArea.style.display = myTurn ? "block" : "none";
+
+        if(myTurn){
+
+            turnText.textContent =
+                "🎮 دورك — جاوب على السؤال";
+
+        }else{
+
+            const player =
+                data.players.find(
+                    p => p.id === room.turn_user_id
+                );
+
+            turnText.textContent =
+                "⏳ دور " +
+                (player ? player.name : "اللاعب الثاني") +
+                " في الإجابة";
+
+        }
+
+        return;
+    }
+
+    if(room.phase === "judging"){
+
+        answerArea.style.display = "none";
+
+        if(room.answer_text){
+
+            answerDisplay.textContent =
+                room.answer_text;
+        }
+
+        if(room.judge_user_id === MY_ID){
+
+            judging.style.display = "block";
+
+            turnText.textContent =
+                "⚖️ دورك — احكم على الإجابة";
+
+        }else{
+
+            judging.style.display = "none";
+
+            turnText.textContent =
+                "⏳ في انتظار حكم اللاعب الثاني";
+
+        }
+
+        return;
+    }
+
+}
+
+async function sendAnswer(){
+
+    if(loading){
+        return;
+    }
+
+    const input =
+        document.getElementById("answerInput");
+
+    const button =
+        document.getElementById("sendAnswer");
+
+    const value =
+        input.value.trim();
+
+    if(!value){
+
+        alert("✍️ اكتب إجابتك أولاً");
+        return;
+
+    }
+
+    loading = true;
+    button.disabled = true;
+
+    try{
+
+        const response = await fetch(
+            "/api/room/" + ROOM_CODE + "/answer",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    answer_text:value
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.ok){
+
+            alert("❌ " + (data.message || "تعذر إرسال الإجابة"));
+            return;
+        }
+
+        input.value = "";
+
+        await getRoom();
+
+    }catch(error){
+
+        alert("❌ حصلت مشكلة في الاتصال");
+
+    }finally{
+
+        loading = false;
+        button.disabled = false;
+
+    }
+
+}
+
+async function judgeAnswer(result){
+
+    if(loading){
+        return;
+    }
+
+    loading = true;
+
+    try{
+
+        const response = await fetch(
+            "/api/room/" + ROOM_CODE + "/judge",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    result:result
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.ok){
+
+            alert("❌ " + (data.message || "تعذر تسجيل الحكم"));
+            return;
+        }
+
+        showVideo(
+            result === "10" ? 10 : 0
+        );
+
+        lastResult = data;
+
+        setTimeout(()=>{
+            getRoom();
+        },1500);
+
+    }catch(error){
+
+        alert("❌ حصلت مشكلة في الاتصال");
+
+    }finally{
+
+        loading = false;
+
+    }
+
+}
+
+function showVideo(points){
+
+    const box =
+        document.getElementById("videoBox");
+
+    const video =
+        document.getElementById("answerVideo");
+
+    const result =
+        document.getElementById("videoResult");
+
+    const filename =
+        points === 10
+        ? "صح.mp4"
+        : "غلط.mp4";
+
+    result.textContent =
+        points === 10
+        ? "🎉 صح! +10 نقاط"
+        : "😅 غلط! 0 نقاط";
+
+    video.src =
+        "/static/videos/" + filename;
+
+    box.style.display = "block";
+
+    video.currentTime = 0;
+
+    video.play().catch(()=>{});
+    // الفيديو يشتغل بطوله الطبيعي.
+    // الانتقال يتم فقط بعد حدث ended.
+    video.onended = function(){
+        video.pause();
+        video.currentTime = 0;
+        document.getElementById("videoBox").style.display = "none";
+
+        if (typeof loadRoom === "function") {
+            loadRoom();
+        } else if (typeof refreshRoom === "function") {
+            refreshRoom();
+        }
+    };
+
+
+
+}
+
+function showFinal(players,room){
+
+    const score1 = room.score_player1;
+    const score2 = room.score_player2;
+
+    let text =
+        "اللاعب الأول: " +
+        score1 +
+        " نقطة<br>" +
+        "اللاعب الثاني: " +
+        score2 +
+        " نقطة";
+
+    document.getElementById("finalScore").innerHTML =
+        text;
+
+    let winner = "";
+
+    if(score1 > score2){
+
+        winner = "🏆 فاز اللاعب الأول!";
+
+    }else if(score2 > score1){
+
+        winner = "🏆 فاز اللاعب الثاني!";
+
+    }else{
+
+        winner = "🤝 تعادل!";
+
+    }
+
+    document.getElementById("winner").innerHTML =
+        "<strong>" + winner + "</strong>";
+
+}
+
+getRoom();
+
+setInterval(getRoom,1000);
+
+</script>
+
+</body>
+</html>

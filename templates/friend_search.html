@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>البحث عن صديق</title>
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="top-title">
+
+        <h1>🔎 نتائج البحث</h1>
+
+        <p>
+            البحث عن:
+            <strong>{{ q }}</strong>
+        </p>
+
+    </div>
+
+
+    <div class="room-box">
+
+        {% if results %}
+
+            {% for user in results %}
+
+            <div class="friend-card">
+
+                <div class="friend-info">
+
+                    <strong>{{ user.name }}</strong>
+
+                    <small>
+                        @{{ user.username }}
+                    </small>
+
+                    <small>
+                        🆔 {{ user.player_id }}
+                    </small>
+
+                </div>
+
+                <button
+                    class="main-btn"
+                    onclick="addFriend({{ user.id }})"
+                >
+                    ➕ إضافة
+                </button>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                ❌ ما لقيناش لاعب بهذا البحث.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div style="text-align:center;margin-top:20px;">
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('friends') }}"
+        >
+            ← الأصدقاء
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function addFriend(id, button) {
+    if (button.disabled) return;
+
+    button.disabled = true;
+    button.textContent = "⏳ جاري الإرسال...";
+
+    try {
+        const response = await fetch(
+            "/friends/request/" + id,
+            { method: "POST" }
+        );
+
+        const result = await response.json();
+
+        if (result.ok) {
+            button.textContent = "✅ تم الإرسال";
+            button.classList.add("secondary-btn");
+
+            alert("❤️ تم إرسال طلب الصداقة بنجاح");
+        } else {
+            button.disabled = false;
+            button.textContent = "➕ إضافة";
+
+            alert(
+                result.message ||
+                "ما قدرناش نرسلوا طلب الصداقة"
+            );
+        }
+
+    } catch (error) {
+        button.disabled = false;
+        button.textContent = "➕ إضافة";
+
+        alert("❌ تعذر الاتصال بالسيرفر");
+    }
+}
+</script>
+
+</body>
+</html>

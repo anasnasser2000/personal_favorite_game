@@ -1,0 +1,29 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تسجيل الدخول</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="box">
+<h1>تسجيل الدخول ❤️</h1>
+
+{% with messages = get_flashed_messages() %}
+{% for message in messages %}
+<div class="error">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
+<form method="post">
+<input name="identifier" placeholder="اسم المستخدم أو الإيميل" required>
+<input type="password" name="password" placeholder="كلمة السر" required>
+<button class="btn" type="submit">دخول</button>
+</form>
+
+<a href="/register">ماعنديش حساب</a>
+</div>
+</body>
+</html>

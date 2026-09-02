@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+.card-open{
+    display:block;
+    text-decoration:none;
+}
+.card-description{
+    opacity:.7;
+    line-height:1.6;
+    margin:8px 0 14px;
+}
+.card-mode{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:20px;
+    background:#fff0f5;
+    color:#c13e70;
+    font-weight:800;
+    font-size:12px;
+    margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+<div class="game-page">
+
+<header class="topbar">
+<a class="back" href="/categories">‹</a>
+<h2>{{ icon }} {{ title }}</h2>
+<a class="owner" href="https://t.me/" target="_blank">صاحب اللعبة</a>
+</header>
+
+<main class="content">
+
+<div class="category-hero">
+<div class="big-icon">{{ icon }}</div>
+<h1>{{ title }}</h1>
+<p>{{ description }}</p>
+</div>
+
+<h2 class="section-title">اختار الكرت 🎴</h2>
+
+<div class="cards-grid">
+
+{% for card in cards %}
+<div class="question-card">
+
+<div class="card-number">{{ card.number }}</div>
+
+<h3>{{ card.name }}</h3>
+
+<div class="card-description">
+{{ card.description }}
+</div>
+
+{% if slug == "single" %}
+
+<div class="card-mode">🎮 لاعب واحد</div>
+
+<a class="main-btn card-open"
+   href="/category/{{ slug }}/card/{{ card.number }}">
+🎮 ابدأ الكرت
+</a>
+
+{% else %}
+
+<div class="card-mode">❤️ 1 VS 1</div>
+
+<form method="POST" action="{{ url_for('create_room') }}">
+<input type="hidden" name="category" value="{{ slug }}">
+<input type="hidden" name="card_number" value="{{ card.number }}">
+
+<button class="main-btn" type="submit">
+➕ إنشاء غرفة بهذا الكرت
+</button>
+</form>
+
+{% endif %}
+
+</div>
+{% endfor %}
+
+</div>
+</main>
+
+<nav class="bottom-nav">
+<a href="/profile">👤<small>البروفايل</small></a>
+<a href="/friends">➕<small>صديق</small></a>
+<a href="/chat">💬<small>الدردشة</small></a>
+<a href="/friends/search">🔎<small>البحث</small></a>
+</nav>
+
+</div>
+</body>
+</html>

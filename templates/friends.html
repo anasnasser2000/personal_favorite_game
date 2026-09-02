@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الأصدقاء ❤️</title>
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="top-title">
+        <h1>👥 أصدقائي</h1>
+        <p>ابحث عن لاعب وأضفه لقائمة أصدقائك</p>
+    </div>
+
+    <div class="room-box">
+
+        <h2>🔎 البحث عن صديق</h2>
+
+        <form method="GET"
+              action="{{ url_for('search_friends') }}">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="ID أو اسم المستخدم أو الاسم"
+                required
+            >
+
+            <button class="main-btn" type="submit">
+                🔎 بحث
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="room-box">
+
+        <h2>❤️ أصدقائي ({{ friends|length }})</h2>
+
+        {% if friends %}
+
+            {% for user in friends %}
+
+            <div class="friend-card">
+
+                <div>
+                    <strong>{{ user.name }}</strong>
+                    <small>
+                        @{{ user.username }} · ID: {{ user.player_id }}
+                    </small>
+                </div>
+
+                <button
+                    class="danger-btn"
+                    onclick="removeFriend({{ user.id }})"
+                >
+                    حذف
+                </button>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>ما عندكش أصدقاء توا.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="room-box">
+
+        <h2>📩 طلبات الصداقة</h2>
+
+        {% if incoming %}
+
+            {% for req in incoming %}
+
+            {% set sender = req.requester_id %}
+
+            <div class="friend-card">
+
+                <div>
+                    <strong>طلب صداقة</strong>
+                    <small>من لاعب رقم {{ sender }}</small>
+                </div>
+
+                <div>
+
+                    <button
+                        class="main-btn"
+                        onclick="acceptRequest({{ req.id }})"
+                    >
+                        قبول
+                    </button>
+
+                    <button
+                        class="danger-btn"
+                        onclick="rejectRequest({{ req.id }})"
+                    >
+                        رفض
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>مافيش طلبات جديدة.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div style="text-align:center;margin-top:20px;">
+
+        <a class="secondary-btn"
+           href="{{ url_for('home') }}">
+            🏠 الرئيسية
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function sendPost(url) {
+
+    const response = await fetch(url, {
+        method: "POST"
+    });
+
+    return await response.json();
+}
+
+
+async function acceptRequest(id) {
+
+    const result = await sendPost(
+        "/friends/accept/" + id
+    );
+
+    if (result.ok) {
+        location.reload();
+    } else {
+        alert(result.message || "صار خطأ");
+    }
+}
+
+
+async function rejectRequest(id) {
+
+    const result = await sendPost(
+        "/friends/reject/" + id
+    );
+
+    if (result.ok) {
+        location.reload();
+    } else {
+        alert(result.message || "صار خطأ");
+    }
+}
+
+
+async function removeFriend(id) {
+
+    if (!confirm("متأكد تبي تحذف الصديق؟")) {
+        return;
+    }
+
+    const result = await sendPost(
+        "/friends/remove/" + id
+    );
+
+    if (result.ok) {
+        location.reload();
+    } else {
+        alert(result.message || "صار خطأ");
+    }
+}
+
+</script>
+
+
+<div style="text-align:center;margin:15px;">
+<a class="secondary-btn" href="/notifications">
+🔔 الإشعارات
+</a>
+</div>
+
+</body>
+</html>

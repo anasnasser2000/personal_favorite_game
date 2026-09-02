@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1">
+
+<title>الإشعارات 🔔</title>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+.notification-page{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+
+.notification-title{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.notification{
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:17px;
+    background:rgba(255,255,255,.10);
+}
+
+.notification.unread{
+    background:rgba(255,255,255,.20);
+}
+
+.notification small{
+    display:block;
+    opacity:.65;
+    margin-top:6px;
+}
+
+.notification button{
+    margin-top:8px;
+}
+
+.empty-notifications{
+    text-align:center;
+    padding:40px 10px;
+    opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="notification-page">
+
+    <div class="notification-title">
+
+        <h1>🔔 الإشعارات</h1>
+
+        <p>
+            عندك {{ unread }} إشعار غير مقروء
+        </p>
+
+    </div>
+
+
+    {% if notifications %}
+
+        {% for item in notifications %}
+
+            <div
+                class="notification
+                {% if not item.is_read %}unread{% endif %}">
+
+                <strong>
+                    {{ item.title }}
+                </strong>
+
+                <p>
+                    {{ item.message }}
+                </p>
+
+                {% if not item.is_read %}
+
+                    <button
+                        class="secondary-btn"
+                        onclick="markRead({{ item.id }})">
+
+                        ✓ تحديد كمقروء
+
+                    </button>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-notifications">
+
+            <h2>🔕 مافيش إشعارات</h2>
+
+            <p>
+                أي إشعار جديد بيظهر هنا.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <div style="text-align:center;margin-top:20px;">
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('home') }}">
+
+            🏠 الرئيسية
+
+        </a>
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('profile') }}">
+
+            👤 البروفايل
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function markRead(id){
+
+    try{
+
+        const response =
+            await fetch(
+                "/notifications/read/" + id,
+                {
+                    method:"POST"
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if(result.ok){
+            location.reload();
+        }
+
+    }catch(error){
+
+        alert("صار خطأ.");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

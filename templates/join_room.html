@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انضمام لغرفة</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+.join-wrap{
+    max-width:500px;
+    margin:50px auto;
+    padding:20px;
+}
+.join-box{
+    background:#fff;
+    padding:30px 20px;
+    border-radius:24px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+    text-align:center;
+}
+.join-icon{
+    font-size:55px;
+}
+.join-box h1{
+    margin:10px 0;
+}
+.join-box p{
+    color:#777;
+}
+.join-box input{
+    width:100%;
+    box-sizing:border-box;
+    padding:16px;
+    margin:20px 0 12px;
+    border-radius:14px;
+    border:1px solid #ddd;
+    text-align:center;
+    font-size:20px;
+    letter-spacing:4px;
+}
+.join-box button{
+    width:100%;
+}
+.back-btn{
+    display:block;
+    margin-top:12px;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+<div class="game-page">
+
+<header class="topbar">
+<a class="back" href="/mode">‹</a>
+<h2>🚪 انضمام لغرفة</h2>
+</header>
+
+<main class="content">
+<div class="join-wrap">
+
+<div class="join-box">
+
+<div class="join-icon">🔑</div>
+
+<h1>ادخل كود الغرفة</h1>
+
+<p>اكتب الكود اللي عطاك إياه صاحب الغرفة</p>
+
+<form method="POST" action="{{ url_for('join_room') }}">
+
+<input
+    type="text"
+    name="room_code"
+    maxlength="6"
+    placeholder="XXXXXX"
+    required
+    autocomplete="off"
+>
+
+<button class="main-btn" type="submit" name="role" value="player">
+🎮 انضمام للعبة
+</button>
+
+</form>
+
+<a class="secondary-btn back-btn" href="/mode">
+رجوع
+</a>
+
+</div>
+
+</div>
+</main>
+
+</div>
+</body>
+</html>

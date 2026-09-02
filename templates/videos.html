@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>فيديوهات اللعبة 🎬</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(
+        135deg,
+        #fff0f6,
+        #f2edff
+    );
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+}
+
+.card {
+    background: white;
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.08);
+}
+
+.title {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.label {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+video {
+    width: 100%;
+    max-height: 220px;
+    border-radius: 18px;
+    background: #111;
+}
+
+.empty {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+}
+
+.back {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    background: #d63384;
+    color: white;
+    padding: 13px;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="title">
+        🎬 فيديوهات الإجابات
+    </div>
+
+    <div class="card">
+
+        <div class="label">
+            ✅ إجابة صحيحة — 10 نقاط
+        </div>
+
+        {% if correct_video %}
+
+        <video controls playsinline preload="metadata">
+            <source
+                src="{{ correct_video }}"
+                type="video/mp4"
+            >
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+
+        {% else %}
+
+        <div class="empty">
+            فيديو صح.mp4 غير موجود حاليًا
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="label">
+            ❌ إجابة خاطئة — 0 نقاط
+        </div>
+
+        {% if wrong_video %}
+
+        <video controls playsinline preload="metadata">
+            <source
+                src="{{ wrong_video }}"
+                type="video/mp4"
+            >
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+
+        {% else %}
+
+        <div class="empty">
+            فيديو غلط.mp4 غير موجود حاليًا
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <a
+        class="back"
+        href="/home"
+    >
+        ← الرجوع للعبة
+    </a>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>البحث</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="container">
+<h1>🔎 البحث عن صديق</h1>
+
+<form method="get">
+<input name="q" value="{{ query }}" placeholder="ID أو اسم المستخدم أو الاسم">
+<button class="btn primary">بحث</button>
+</form>
+
+{% for user in results %}
+<div class="result">
+<strong>{{ user.name }}</strong>
+<span>@{{ user.username }}</span>
+<span>🆔 {{ user.player_id }}</span>
+<button class="btn">➕ إضافة</button>
+</div>
+{% endfor %}
+
+<a href="/home">الرئيسية</a>
+</div>
+</body>
+</html>

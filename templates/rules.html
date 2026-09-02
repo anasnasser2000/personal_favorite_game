@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1">
+
+<title>نظام اللعبة</title>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+.rules-page{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+
+.rules-card{
+    padding:20px;
+    border-radius:20px;
+    background:rgba(255,255,255,.10);
+    line-height:1.9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="rules-page">
+
+    <div class="rules-card">
+
+        <h1>📜 نظام اللعبة</h1>
+
+        <p>
+            قبل ما تبدأ، لازم تكون فاهم إن اللعبة فيها
+            نظام إدارة ومراقبة للأحداث المهمة داخل اللعبة.
+        </p>
+
+        <ul>
+
+            <li>🎮 يتم تسجيل بعض أحداث اللعب والنشاطات المهمة.</li>
+
+            <li>
+                📲 قد يتم إرسال معلومات النشاط إلى صاحب اللعبة
+                عبر Telegram لغرض إدارة اللعبة ومتابعة المشاكل.
+            </li>
+
+            <li>
+                🚫 ممنوع السب أو التهديد أو الابتزاز أو الاحتيال
+                أو أي استعمال مخالف للقانون.
+            </li>
+
+            <li>
+                🛑 مخالفة القواعد ممكن تؤدي إلى إيقاف الحساب
+                أو الحظر الدائم.
+            </li>
+
+            <li>
+                🔐 لا تشارك كلمة السر مع أي شخص.
+            </li>
+
+        </ul>
+
+        <p>
+            باستمرارك في اللعبة، أنت تؤكد إنك فهمت النظام.
+        </p>
+
+        <a
+            class="btn"
+            href="{{ url_for('mode') }}">
+
+            فاهم نظام اللعب ❤️
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

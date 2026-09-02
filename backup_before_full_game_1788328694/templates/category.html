@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }}</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+.card-open{
+    display:block;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+<div class="game-page">
+
+<header class="topbar">
+<a class="back" href="/categories?mode={{ request.args.get('mode','favorite') }}">‹</a>
+<h2>{{ icon }} {{ title }}</h2>
+<a class="owner" href="https://t.me/" target="_blank">صاحب اللعبة</a>
+</header>
+
+<main class="content">
+
+<div class="category-hero">
+<div class="big-icon">{{ icon }}</div>
+<h1>{{ title }}</h1>
+<p>{{ description }}</p>
+</div>
+
+<h2 class="section-title">اختار الكرت 🎴</h2>
+
+<div class="cards-grid">
+
+{% for card in cards %}
+
+<div class="question-card">
+
+<div class="card-number">{{ card.number }}</div>
+
+<h3>
+{% if card.number == 1 %}
+🔮 كرت المستقبل
+{% elif card.number == 2 %}
+❤️ كرت المشاعر
+{% elif card.number == 3 %}
+🧠 كرت المعرفة
+{% elif card.number == 4 %}
+😂 كرت الفضايح
+{% elif card.number == 5 %}
+🤝 كرت الثقة
+{% endif %}
+</h3>
+
+<p>20 سؤال • نقاط 10 / 0 • تخطي</p>
+
+<form method="POST" action="{{ url_for('create_room') }}">
+
+<input type="hidden" name="category" value="{{ slug }}">
+<input type="hidden" name="card_number" value="{{ card.number }}">
+<input type="hidden" name="mode" value="{{ request.args.get('mode','favorite') }}">
+
+<button class="main-btn" type="submit">
+➕ إنشاء غرفة بهذا الكرت
+</button>
+
+</form>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</main>
+
+<nav class="bottom-nav">
+<a href="/profile">👤<small>البروفايل</small></a>
+<a href="/friends">➕<small>صديق</small></a>
+<a href="/chat">💬<small>الدردشة</small></a>
+<a href="/friends/search">🔎<small>البحث</small></a>
+</nav>
+
+</div>
+</body>
+</html>

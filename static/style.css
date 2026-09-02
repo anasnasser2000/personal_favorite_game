@@ -1,0 +1,174 @@
+
+
+/* SECTION 5 — ROOMS */
+
+.room-box {
+    background: rgba(255,255,255,.95);
+    border-radius: 22px;
+    padding: 20px;
+    margin: 16px 0;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+}
+
+.room-box h2 {
+    margin-top: 0;
+}
+
+.room-box input,
+.room-box select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    margin: 7px 0 14px;
+    border-radius: 14px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.room-box label {
+    display: block;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.main-btn,
+.secondary-btn,
+.danger-btn {
+    display: inline-block;
+    border: 0;
+    border-radius: 15px;
+    padding: 13px 18px;
+    margin: 6px 0;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.main-btn {
+    background: #ff4f8b;
+    color: white;
+}
+
+.secondary-btn {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.danger-btn {
+    background: #333;
+    color: white;
+}
+
+.join-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.room-code {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 18px;
+    background: #fff;
+    border: 2px dashed #ff4f8b;
+}
+
+.room-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.room-header p {
+    color: #666;
+}
+
+.room-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 16px;
+    background: #fafafa;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #eee;
+}
+
+.member-card {
+    padding: 13px;
+    margin: 8px 0;
+    border-radius: 14px;
+    background: #fafafa;
+}
+
+.spectator-notice,
+.player-notice {
+    padding: 15px;
+    border-radius: 16px;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.spectator-notice {
+    background: #f2f2f2;
+}
+
+.player-notice {
+    background: #fff0f6;
+}
+
+.room-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.room-actions form {
+    margin: 0;
+}
+
+.room-actions button {
+    width: 100%;
+}
+
+
+
+/* =========================================================
+   SECTION 6 — FRIENDS
+   ========================================================= */
+
+.friend-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    margin: 9px 0;
+    border-radius: 17px;
+    background: #fafafa;
+    border: 1px solid #eee;
+}
+
+.friend-card small {
+    display: block;
+    color: #777;
+    margin-top: 4px;
+}
+
+.friend-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.friend-card .main-btn,
+.friend-card .danger-btn {
+    white-space: nowrap;
+}

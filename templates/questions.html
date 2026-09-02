@@ -1,0 +1,409 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>{{ title }} - الكرت {{ card_number }}</title>
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<style>
+.answer-result-video {
+    width: 100%;
+    max-width: 260px;
+    max-height: 150px;
+    display: block;
+    margin: 12px auto;
+    border-radius: 16px;
+    object-fit: cover;
+    background: #111;
+}
+
+.answer-video-box {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.answer-video-box video {
+    width: 100%;
+    max-width: 260px;
+    max-height: 150px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="game-page">
+
+<header class="topbar">
+
+<a class="back"
+href="/category/{{ slug }}">
+‹
+</a>
+
+<h2>
+{{ title }}
+</h2>
+
+<a class="owner"
+href="https://t.me/"
+target="_blank">
+صاحب اللعبة
+</a>
+
+</header>
+
+
+<main class="content">
+
+<div class="category-hero">
+
+<div class="big-icon">
+❓
+</div>
+
+<h1>
+الكرت {{ card_number }}
+</h1>
+
+<p>
+20 سؤال
+</p>
+
+</div>
+
+
+<div id="game">
+
+{% for q in questions %}
+
+<div
+class="play-question"
+data-question-id="{{ q.id }}"
+style="{% if not loop.first %}display:none{% endif %}"
+>
+
+<div class="question-top">
+
+<span>
+السؤال {{ loop.index }} / {{ questions|length }}
+</span>
+
+<span class="question-points">
+10 نقاط
+</span>
+
+</div>
+
+
+<div class="question-text-big">
+{{ q.text }}
+</div>
+
+
+<div class="answer-buttons">
+
+<button
+class="answer ten"
+onclick="answerQuestion({{ q.id }}, '10', this)"
+>
+❤️ أعطيه 10 نقاط
+</button>
+
+
+<button
+class="answer zero"
+onclick="answerQuestion({{ q.id }}, '0', this)"
+>
+💔 نعطيه 0
+</button>
+
+
+<button
+class="answer skip"
+onclick="answerQuestion({{ q.id }}, 'skip', this)"
+>
+⏭️ لم يجب / تخطي
+</button>
+
+</div>
+
+<div class="answer-result"></div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<div id="finalResult"
+class="final-result"
+style="display:none">
+
+<h2>
+🎉 خلص الكرت
+</h2>
+
+<div id="scoreBox"></div>
+
+<a
+class="main-play"
+href="/category/{{ slug }}"
+>
+الرجوع للكروت
+</a>
+
+</div>
+
+</main>
+
+
+<nav class="bottom-nav">
+
+<a href="/profile">
+👤
+<small>البروفايل</small>
+</a>
+
+<a href="/friends">
+➕
+<small>صديق</small>
+</a>
+
+<a href="/chat">
+💬
+<small>الدردشة</small>
+</a>
+
+<a href="/friends/search">
+🔎
+<small>البحث</small>
+</a>
+
+</nav>
+
+</div>
+
+
+<script>
+
+let current = 0;
+
+const questions =
+Array.from(
+document.querySelectorAll(".play-question")
+);
+
+
+async function answerQuestion(
+questionId,
+value,
+button
+){
+
+const box =
+button.closest(".play-question");
+
+const buttons =
+box.querySelectorAll("button");
+
+buttons.forEach(
+b => b.disabled = true
+);
+
+
+try{
+
+const response =
+await fetch("/api/answer",{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+
+question_id:
+questionId,
+
+value:
+value
+
+})
+
+});
+
+
+const data =
+await response.json();
+
+
+if(!data.ok){
+
+box.querySelector(
+".answer-result"
+).textContent =
+data.message ||
+"صار خطأ";
+
+buttons.forEach(
+b => b.disabled = false
+);
+
+return;
+
+}
+
+
+box.querySelector(
+".answer-result"
+).textContent =
+value === "10"
+? "❤️ تم تسجيل 10 نقاط"
+: value === "0"
+? "💔 تم تسجيل 0 نقاط"
+: "⏭️ تم تخطي السؤال";
+
+
+const videoBox = document.getElementById("answerVideoBox");
+const resultVideo = document.getElementById("answerResultVideo");
+
+if (videoBox && resultVideo) {
+    resultVideo.src =
+        value === "10"
+        ? "/static/videos/صح.mp4"
+        : "/static/videos/غلط.mp4";
+
+    videoBox.style.display = "block";
+    resultVideo.currentTime = 0;
+
+    resultVideo.onended = function(){
+        videoBox.style.display = "none";
+        resultVideo.pause();
+        resultVideo.currentTime = 0;
+        nextQuestion();
+    };
+
+    resultVideo.play().catch(() => {
+        // لو المتصفح منع التشغيل التلقائي، زر التحكم يبقى ظاهر.
+    });
+} else {
+    nextQuestion();
+}
+
+
+}catch(error){
+
+box.querySelector(
+".answer-result"
+).textContent =
+"صار خطأ في الاتصال";
+
+buttons.forEach(
+b => b.disabled = false
+);
+
+}
+
+}
+
+
+async function nextQuestion(){
+
+questions[current].style.display =
+"none";
+
+current++;
+
+if(current < questions.length){
+
+questions[current].style.display =
+"block";
+
+return;
+
+}
+
+
+document.getElementById(
+"finalResult"
+).style.display =
+"block";
+
+
+try{
+
+const response =
+await fetch("/api/my-score");
+
+const data =
+await response.json();
+
+
+document.getElementById(
+"scoreBox"
+).innerHTML = `
+
+<div class="score-grid">
+
+<div>
+<b>${data.total_points}</b>
+<small>مجموع النقاط</small>
+</div>
+
+<div>
+<b>${data.ten_points}</b>
+<small>إجابات 10</small>
+</div>
+
+<div>
+<b>${data.zero_points}</b>
+<small>إجابات 0</small>
+</div>
+
+<div>
+<b>${data.skipped}</b>
+<small>متخطي</small>
+</div>
+
+</div>
+
+`;
+
+}catch(error){
+
+document.getElementById(
+"scoreBox"
+).textContent =
+"تعذر تحميل النتيجة";
+
+}
+
+}
+
+</script>
+
+
+<div class="answer-video-box" id="answerVideoBox" style="display:none;">
+    <video
+        id="answerResultVideo"
+        class="answer-result-video"
+        controls
+        playsinline
+        preload="auto"
+    ></video>
+</div>
+
+</body>
+</html>

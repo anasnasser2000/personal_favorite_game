@@ -1,0 +1,19 @@
+{
+  "name": "سؤالي لي شخصي المفضل❤",
+  "short_name": "سؤالي لي",
+  "description": "لعبة الأسئلة والأصدقاء والغرف",
+  "start_url": "/",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#fff5f8",
+  "theme_color": "#d94f82",
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

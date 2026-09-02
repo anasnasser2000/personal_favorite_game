@@ -1,0 +1,113 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الرئيسية</title>
+<link rel="stylesheet" href="/static/css/style.css">
+
+<style>
+.nav-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:20px;
+    height:20px;
+    padding:0 6px;
+    margin-right:4px;
+    border-radius:999px;
+    background:#e53935;
+    color:white;
+    font-size:12px;
+    font-weight:bold;
+}
+</style>
+
+<script>
+async function updateBadges(){
+    try{
+        const n = await fetch(
+            "/api/notifications",
+            {cache:"no-store"}
+        ).then(r => r.json());
+
+        const c = await fetch(
+            "/api/chat/unread",
+            {cache:"no-store"}
+        ).then(r => r.json());
+
+        const notificationBadge =
+            document.getElementById("notificationBadge");
+
+        const chatBadge =
+            document.getElementById("chatBadge");
+
+        if(notificationBadge){
+            const count = Number(n.unread || 0);
+            notificationBadge.textContent =
+                count > 0 ? count : "";
+            notificationBadge.style.display =
+                count > 0 ? "inline-flex" : "none";
+        }
+
+        if(chatBadge){
+            const count = Number(c.unread || 0);
+            chatBadge.textContent =
+                count > 0 ? count : "";
+            chatBadge.style.display =
+                count > 0 ? "inline-flex" : "none";
+        }
+
+    }catch(e){}
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    updateBadges
+);
+
+setInterval(updateBadges, 3000);
+</script>
+
+</head>
+<body>
+<div class="game-page">
+<header class="topbar">
+<h2>سؤالي لي شخصي المفضل❤</h2>
+<a class="owner" href="https://www.facebook.com/share/19Edkj7r9m/" target="_blank">صانعة اللعبة ❤️</a>
+</header>
+
+<main class="content">
+<div class="profile-mini">
+<div class="avatar">👤</div>
+<div>
+<strong>{{ user.name }}</strong>
+<small>@{{ user.username }} • ID: {{ user.player_id }}</small>
+</div>
+</div>
+
+<div class="hero">
+<div class="heart">❤️</div>
+<h1>جاهز للعب؟</h1>
+<p>اختار طريقة اللعب وابدأ</p>
+<a class="main-play" href="/mode">ابدأ اللعبة 🎮</a>
+</div>
+</main>
+
+<nav class="bottom-nav">
+<a href="/profile">👤<small>البروفايل</small></a>
+<a href="/friends">➕<small>صديق</small></a>
+<a href="/chat">💬<small>الدردشة <span id="chatBadge" class="nav-badge" style="display:none;"></span></small></a>
+<a href="/friends/search">🔎<small>البحث</small></a>
+</nav>
+</div>
+
+<div style="text-align:center;margin:15px;">
+<a class="secondary-btn" href="/notifications">
+🔔 الإشعارات
+</a>
+</div>
+
+</body>
+</html>

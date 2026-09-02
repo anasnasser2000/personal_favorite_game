@@ -1,0 +1,49 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الرئيسية</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="game-page">
+<header class="topbar">
+<h2>سؤالي لي شخصي المفضل❤</h2>
+<a class="owner" href="https://t.me/" target="_blank">صاحب اللعبة</a>
+</header>
+
+<main class="content">
+<div class="profile-mini">
+<div class="avatar">👤</div>
+<div>
+<strong>{{ user.name }}</strong>
+<small>@{{ user.username }} • ID: {{ user.player_id }}</small>
+</div>
+</div>
+
+<div class="hero">
+<div class="heart">❤️</div>
+<h1>جاهز للعب؟</h1>
+<p>اختار طريقة اللعب وابدأ</p>
+<a class="main-play" href="/mode">ابدأ اللعبة 🎮</a>
+</div>
+</main>
+
+<nav class="bottom-nav">
+<a href="/profile">👤<small>البروفايل</small></a>
+<a href="/friends">➕<small>صديق</small></a>
+<a href="/chat">💬<small>الدردشة</small></a>
+<a href="/friends/search">🔎<small>البحث</small></a>
+</nav>
+</div>
+
+<div style="text-align:center;margin:15px;">
+<a class="secondary-btn" href="/notifications">
+🔔 الإشعارات
+</a>
+</div>
+
+</body>
+</html>

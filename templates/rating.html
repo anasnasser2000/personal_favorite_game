@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>تقييم اللاعب ⭐</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #fff0f6, #f5edff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 430px;
+    background: white;
+    border-radius: 28px;
+    padding: 28px 22px;
+    text-align: center;
+    box-shadow: 0 15px 45px rgba(0,0,0,.10);
+}
+
+.title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.name {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.player-id {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.average {
+    font-size: 17px;
+    margin-bottom: 20px;
+}
+
+.stars {
+    direction: ltr;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 15px 0 25px;
+}
+
+.stars input {
+    display: none;
+}
+
+.stars label {
+    font-size: 43px;
+    color: #ccc;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.stars label:hover,
+.stars label:hover ~ label,
+.stars input:checked ~ label {
+    color: #ffc107;
+}
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    padding: 13px;
+    font-size: 15px;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: #d63384;
+}
+
+button {
+    width: 100%;
+    border: 0;
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 16px;
+    background: #d63384;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.back {
+    display: block;
+    margin-top: 15px;
+    color: #777;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="title">⭐ تقييم اللاعب</div>
+
+    <div class="name">
+        {{ rated_user.name }}
+    </div>
+
+    <div class="player-id">
+        🆔 {{ rated_user.player_id }}
+        ·
+        @{{ rated_user.username }}
+    </div>
+
+    <div class="average">
+        التقييم الحالي:
+        <strong>{{ average }}</strong> / 5
+        <br>
+        <small>{{ rating_count }} تقييم</small>
+    </div>
+
+    <form method="POST">
+
+        <div class="stars">
+
+            <input
+                type="radio"
+                id="star5"
+                name="score"
+                value="5"
+                {% if existing and existing.score == 5 %}checked{% endif %}
+            >
+            <label for="star5">★</label>
+
+            <input
+                type="radio"
+                id="star4"
+                name="score"
+                value="4"
+                {% if existing and existing.score == 4 %}checked{% endif %}
+            >
+            <label for="star4">★</label>
+
+            <input
+                type="radio"
+                id="star3"
+                name="score"
+                value="3"
+                {% if existing and existing.score == 3 %}checked{% endif %}
+            >
+            <label for="star3">★</label>
+
+            <input
+                type="radio"
+                id="star2"
+                name="score"
+                value="2"
+                {% if existing and existing.score == 2 %}checked{% endif %}
+            >
+            <label for="star2">★</label>
+
+            <input
+                type="radio"
+                id="star1"
+                name="score"
+                value="1"
+                {% if existing and existing.score == 1 %}checked{% endif %}
+            >
+            <label for="star1">★</label>
+
+        </div>
+
+        <textarea
+            name="comment"
+            placeholder="اكتب تعليقك عن اللعب أو اللاعب...">{{ existing.comment if existing else "" }}</textarea>
+
+        <button type="submit">
+            ⭐ حفظ التقييم
+        </button>
+
+    </form>
+
+    <a class="back" href="/home">
+        ← الرجوع للعبة
+    </a>
+
+</div>
+
+</body>
+</html>
