@@ -787,18 +787,46 @@ def questions_card(slug, card_number):
     if slug not in allowed or card_number not in range(1, 6):
         return redirect(url_for("categories"))
 
-    questions = Question.query.filter_by(
-        category=slug,
-        card_number=card_number
-    ).order_by(Question.question_number).all()
+    try:
+        questions = Question.query.filter_by(
+            category=slug,
+            card_number=card_number
+        ).order_by(Question.question_number).all()
 
-    return render_template(
-        "questions.html",
-        title=allowed[slug],
-        slug=slug,
-        card_number=card_number,
-        questions=questions
-    )
+        return render_template(
+            "questions.html",
+            title=allowed[slug],
+            slug=slug,
+            card_number=card_number,
+            questions=questions
+        )
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ QUESTIONS PAGE ERROR: {e}")
+
+        # إعادة تحميل الأسئلة مباشرة من قاعدة البيانات
+        rows = db.session.execute(
+            db.text("""
+                SELECT id, text
+                FROM question
+                WHERE category = :category
+                  AND card_number = :card
+                ORDER BY question_number
+            """),
+            {
+                "category": slug,
+                "card": card_number
+            }
+        ).mappings().all()
+
+        return render_template(
+            "questions.html",
+            title=allowed[slug],
+            slug=slug,
+            card_number=card_number,
+            questions=rows
+        )
 
 
 @app.route("/api/event", methods=["POST"])
