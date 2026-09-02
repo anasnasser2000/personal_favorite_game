@@ -1011,6 +1011,54 @@ def join_room():
     return redirect(url_for("room_page", room_code=room.room_code))
 
 
+@app.route("/room/<room_code>/spectate", methods=["POST"])
+@login_required
+def spectate_room(room_code):
+    room_code = str(room_code).strip().upper()
+
+    room = Room.query.filter_by(room_code=room_code).first()
+
+    if not room:
+        flash("❌ الغرفة مش موجودة")
+        return redirect(url_for("rooms_page"))
+
+    existing = RoomMember.query.filter_by(
+        room_id=room.id,
+        user_id=session["user_id"]
+    ).first()
+
+    if existing:
+        if existing.role == "player":
+            flash("👤 أنت لاعب في الغرفة بالفعل")
+        else:
+            flash("👀 أنت داخل الغرفة كمشاهد بالفعل")
+        return redirect(url_for("room_page", room_code=room.room_code))
+
+    member = RoomMember(
+        room_id=room.id,
+        user_id=session["user_id"],
+        role="spectator"
+    )
+
+    db.session.add(member)
+    db.session.commit()
+
+    spectator = db.session.get(User, session["user_id"])
+
+    if spectator:
+        send_telegram_background(
+            "👀 دخول مشاهد للغرفة\n\n"
+            + telegram_user_text(spectator)
+            + "\n\n"
+            + f"🔐 الغرفة: {room.room_code}\n"
+            + f"🎮 القسم: {room.category}\n"
+            + f"🃏 الكرت: {room.card_number}\n"
+            + "👀 الدور: مشاهد"
+        )
+
+    return redirect(url_for("room_page", room_code=room.room_code))
+
+
 @app.route("/room/<room_code>")
 @login_required
 def room_page(room_code):
