@@ -19,7 +19,7 @@ import urllib.parse
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "personal-favorite-game-secret-change-later"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../data/game.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/game.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
