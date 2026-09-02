@@ -19,8 +19,15 @@ import urllib.parse
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "personal-favorite-game-secret-change-later"
-Path("/tmp/personal_favorite_game").mkdir(parents=True, exist_ok=True)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/personal_favorite_game/game.db"
+import os
+
+if os.environ.get("RENDER"):
+    db_dir = Path("/tmp/personal_favorite_game")
+else:
+    db_dir = Path("data")
+
+db_dir.mkdir(parents=True, exist_ok=True)
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{(db_dir / "game.db").resolve()}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
