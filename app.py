@@ -1685,6 +1685,7 @@ def my_answers():
     }
 
 with app.app_context():
+    # إنشاء كل جداول قاعدة البيانات بعد تعريف الموديلات
     db.create_all()
 
     # استيراد الأسئلة الأساسية إلى قاعدة Render عند الحاجة فقط
@@ -1766,6 +1767,11 @@ class RoomMember(db.Model):
     __table_args__ = (
         db.UniqueConstraint("room_id", "user_id", name="unique_room_member"),
     )
+
+
+# التأكد من وجود جداول الغرف في قاعدة البيانات الحالية
+with app.app_context():
+    db.create_all()
 
 
 class Friendship(db.Model):
