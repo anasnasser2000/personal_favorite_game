@@ -1,13 +1,15 @@
-const CACHE = "personal-favorite-v2";
+const CACHE = "personal-favorite-static-v3";
+
+const STATIC_FILES = [
+    "/manifest.json",
+    "/static/style.css",
+    "/static/css/style.css",
+    "/static/icon.svg"
+];
 
 self.addEventListener("install", event => {
     event.waitUntil(
-        caches.open(CACHE).then(cache => cache.addAll([
-            "/",
-            "/manifest.json",
-            "/static/style.css",
-            "/static/icon.svg"
-        ]))
+        caches.open(CACHE).then(cache => cache.addAll(STATIC_FILES))
     );
 
     self.skipWaiting();
@@ -32,14 +34,28 @@ self.addEventListener("fetch", event => {
         return;
     }
 
+    const url = new URL(event.request.url);
+
+    // لا نخزن صفحات الحسابات أو الصفحات الديناميكية
+    // لأنها تحتوي على بيانات المستخدم الحالي.
+    const isStatic =
+        url.pathname.startsWith("/static/") ||
+        url.pathname === "/manifest.json";
+
+    if (!isStatic) {
+        return;
+    }
+
     event.respondWith(
         fetch(event.request)
             .then(response => {
-                const copy = response.clone();
+                if (response.ok) {
+                    const copy = response.clone();
 
-                caches.open(CACHE).then(cache => {
-                    cache.put(event.request, copy);
-                });
+                    caches.open(CACHE).then(cache => {
+                        cache.put(event.request, copy);
+                    });
+                }
 
                 return response;
             })

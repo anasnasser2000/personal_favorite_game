@@ -665,14 +665,7 @@ def login():
             flash("بيانات الدخول غلط.")
             return render_template("login.html")
 
-        # تنظيف أي Session قديمة قبل تسجيل الحساب الجديد
-        session.clear()
-
-        # ربط Session بالحساب الذي سجل الدخول فعليًا
         session["user_id"] = user.id
-        session.permanent = True
-        session.modified = True
-
         return redirect(url_for("home"))
 
     return render_template("login.html")
