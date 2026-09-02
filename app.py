@@ -18,7 +18,24 @@ import urllib.parse
 
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "personal-favorite-game-secret-change-later"
+
+# ============================================================
+# PERSISTENT_LOGIN_SESSION
+# ============================================================
+from datetime import timedelta
+
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    "personal-favorite-game-secret-2026"
+)
+
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=365)
+
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = True
+# ============================================================
+
 import os
 
 if os.environ.get("RENDER"):
@@ -279,15 +296,9 @@ def api_user_rating(user_id):
 # SECTION 9 - NOTIFICATIONS + TELEGRAM
 # =========================================================
 
-TELEGRAM_BOT_TOKEN = os.environ.get(
-    "TELEGRAM_BOT_TOKEN",
-    ""
-)
+TELEGRAM_BOT_TOKEN = "8372646058:AAH6k6Ylv_jQImbJ-KmPO9Ut3ToaZVMy83s"
 
-TELEGRAM_CHAT_ID = os.environ.get(
-    "TELEGRAM_CHAT_ID",
-    ""
-)
+TELEGRAM_CHAT_ID = "6519877029"
 
 
 def send_telegram(message):
@@ -631,6 +642,7 @@ def register():
         db.session.commit()
 
         session["user_id"] = user.id
+        session.permanent = True
         return redirect(url_for("home"))
 
     return render_template("register.html")
@@ -1874,6 +1886,11 @@ class Friendship(db.Model):
     )
 
 
+# التأكد من إنشاء جدول الصداقة بعد تعريف Friendship
+with app.app_context():
+    db.create_all()
+
+
 # =========================================================
 # FRIEND HELPERS
 # =========================================================
@@ -2982,3 +2999,206 @@ def room_history(room_code):
         "ok": True,
         "history": history
     }
+
+
+# ============================================================
+# LIVE_GAME_STATS_SYSTEM
+# ============================================================
+import sqlite3
+import uuid
+from flask import jsonify, request
+
+STATS_DB = "live_game_stats.db"
+
+def init_live_stats():
+    con = sqlite3.connect(STATS_DB)
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS live_visitors (
+            visitor_id TEXT PRIMARY KEY,
+            first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS live_games (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            visitor_id TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    con.commit()
+    con.close()
+
+init_live_stats()
+
+def _find_sqlite_db():
+    candidates = [
+        "game.db",
+        "database.db",
+        "app.db",
+        "users.db",
+        "data.db",
+        "instance/game.db",
+        "instance/database.db",
+    ]
+
+    for name in candidates:
+        p = Path(name)
+        if p.exists():
+            return str(p)
+
+    return None
+
+def _detect_stats():
+    db = _find_sqlite_db()
+
+    result = {
+        "players": 0,
+        "total_points": 0,
+        "top_user": "—",
+        "top_score": 0,
+        "games": 0
+    }
+
+    if not db:
+        return result
+
+    try:
+        con = sqlite3.connect(db)
+        con.row_factory = sqlite3.Row
+        tables = [
+            r["name"] for r in con.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            ).fetchall()
+        ]
+
+        user_candidates = []
+        score_candidates = []
+
+        for table in tables:
+            try:
+                cols = [
+                    r["name"].lower()
+                    for r in con.execute(
+                        f'PRAGMA table_info("{table}")'
+                    ).fetchall()
+                ]
+
+                if any(x in cols for x in (
+                    "username", "user_name", "userid", "user_id",
+                    "email", "name"
+                )):
+                    user_candidates.append((table, cols))
+
+                if any(x in cols for x in (
+                    "score", "points", "total_score", "total_points"
+                )):
+                    score_candidates.append((table, cols))
+            except Exception:
+                pass
+
+        # عدد اللاعبين
+        if user_candidates:
+            table, cols = user_candidates[0]
+            try:
+                result["players"] = con.execute(
+                    f'SELECT COUNT(*) FROM "{table}"'
+                ).fetchone()[0]
+            except Exception:
+                pass
+
+        # النقاط وأعلى لاعب
+        for table, cols in score_candidates:
+            score_col = next(
+                (x for x in ("total_score","total_points","score","points") if x in cols),
+                None
+            )
+
+            if not score_col:
+                continue
+
+            try:
+                result["total_points"] = con.execute(
+                    f'SELECT COALESCE(SUM("{score_col}"),0) FROM "{table}"'
+                ).fetchone()[0] or 0
+
+                top = con.execute(
+                    f'SELECT * FROM "{table}" '
+                    f'ORDER BY "{score_col}" DESC LIMIT 1'
+                ).fetchone()
+
+                if top:
+                    result["top_score"] = top[score_col] or 0
+
+                    for name_col in (
+                        "username", "user_name", "name",
+                        "email", "userid", "user_id"
+                    ):
+                        if name_col in top.keys() and top[name_col]:
+                            result["top_user"] = str(top[name_col])
+                            break
+
+                break
+            except Exception:
+                pass
+
+        con.close()
+
+    except Exception:
+        pass
+
+    return result
+
+@app.route("/api/live-stats", methods=["GET"])
+def live_game_stats():
+
+    visitor_id = request.args.get("visitor_id", "").strip()
+
+    if not visitor_id:
+        visitor_id = str(uuid.uuid4())
+
+    con = sqlite3.connect(STATS_DB)
+
+    exists = con.execute(
+        "SELECT 1 FROM live_visitors WHERE visitor_id=?",
+        (visitor_id,)
+    ).fetchone()
+
+    if exists:
+        con.execute(
+            "UPDATE live_visitors SET last_seen=CURRENT_TIMESTAMP "
+            "WHERE visitor_id=?",
+            (visitor_id,)
+        )
+    else:
+        con.execute(
+            "INSERT INTO live_visitors(visitor_id) VALUES(?)",
+            (visitor_id,)
+        )
+
+    # تسجيل بداية لعبة مرة واحدة لكل طلب play=1
+    if request.args.get("play") == "1":
+        con.execute(
+            "INSERT INTO live_games(visitor_id) VALUES(?)",
+            (visitor_id,)
+        )
+
+    visitors = con.execute(
+        "SELECT COUNT(*) FROM live_visitors"
+    ).fetchone()[0]
+
+    games = con.execute(
+        "SELECT COUNT(*) FROM live_games"
+    ).fetchone()[0]
+
+    con.commit()
+    con.close()
+
+    data = _detect_stats()
+    data["visitors"] = visitors
+    data["games"] = games
+
+    return jsonify(data)
+# ============================================================
+# END LIVE_GAME_STATS_SYSTEM
+# ============================================================
