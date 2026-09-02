@@ -14,37 +14,135 @@
 <a class="owner" href="https://t.me/" target="_blank">صاحب اللعبة</a>
 </header>
 
-<main class="content">
+<main class="container">
 
-<div class="hero">
-<div class="heart">❤️</div>
-<h1>شن تبي تدير؟</h1>
-<p>اختار كيف تبي تلعب، وكل اختيار تحته شرح بسيط 👇</p>
+<section class="hero">
+    <div class="hero-icon">🎮</div>
+    <h1>شن تبي تدير؟</h1>
+    <p>اختار طريقة اللعب اللي تناسبك 👇</p>
+</section>
+
+<div class="modes">
+
+    <!-- لعب بروحي -->
+    <div class="mode-card favorite">
+        <div class="mode-icon">🎮</div>
+        <h2>لعب بروحي</h2>
+        <p>
+            تبي تلعب وحدك؟ اختار القسم والكرت وابدأ الأسئلة بروحك،
+            وسجّل نقاطك وشوف نتيجتك في النهاية.
+        </p>
+
+        <a class="btn" href="/categories">🎮 ابدأ اللعب بروحي</a>
+
+        <details>
+            <summary>📖 شرح لعب بروحي</summary>
+            <div class="mode-help">
+                لو ما عندكش شخص ثاني بيلعب معاك أونلاين،
+                هادي هي الطريقة المناسبة ليك.
+                اختار القسم، وبعدها الكرت، وابدأ جاوب على الأسئلة وسجّل نقاطك.
+            </div>
+        </details>
+    </div>
+
+    <!-- إنشاء غرفة -->
+    <div class="mode-card world">
+        <div class="mode-icon">🏠</div>
+        <h2>إنشاء غرفة</h2>
+        <p>
+            تبي تلعب مع صاحبك؟ أنشئ غرفة خاصة وخذ كود اللعبة
+            وابعثه للشخص اللي تبي يلعب معاك.
+        </p>
+
+        <a class="btn" href="/categories">🏠 إنشاء غرفة</a>
+
+        <details>
+            <summary>📖 شرح إنشاء غرفة</summary>
+            <div class="mode-help">
+                اختار إنشاء غرفة، وبعدها اختار القسم اللي تبي تلعبوا فيه.
+                اللعبة بتنشئلك غرفة خاصة وتعطيك كود.
+                ابعث الكود لصاحبك باش يقدر ينضم للغرفة وتلعبوا مع بعض أونلاين.
+            </div>
+        </details>
+    </div>
+
+    <!-- الانضمام للغرفة -->
+    <div class="mode-card">
+        <div class="mode-icon">🔑</div>
+        <h2>الانضمام للغرفة</h2>
+        <p>
+            صاحبك أنشأ غرفة وعطاك الكود؟
+            حط الكود وادخل للغرفة باش تبدأوا اللعب مع بعض.
+        </p>
+
+        <a class="btn" href="/join-room">🔑 الانضمام للغرفة</a>
+
+        <details>
+            <summary>📖 شرح الانضمام</summary>
+            <div class="mode-help">
+                لو عندك كود اللعبة وعطاهولك صاحبك،
+                خش من هني وحط الكود في المكان المخصص واضغط دخول.
+                أما لو ما عندكش شخص ثاني بيلعب معاك أونلاين،
+                اختار «لعب بروحي» والعب وحدك.
+            </div>
+        </details>
+    </div>
+
 </div>
 
-<div class="mode-grid">
-
-<a class="mode-card favorite" href="/categories">
-<span>🎮</span>
-<strong>نلعب بروحي</strong>
-<small>تبي تلعب وحدك؟ خش واختار القسم والكرت وابدأ الأسئلة بروحك.</small>
-</a>
-
-<a class="mode-card world" href="/join-room">
-<span>👥</span>
-<strong>نلعب مع حد</strong>
-<small>ادخل لغرفة صاحبك بالكود والعبوا مع بعض سؤال بسؤال.</small>
-</a>
-
+<div class="game-help-button">
+    <button type="button" onclick="openGameHelp()">
+        📖 شرح اللعبة بالكامل
+    </button>
 </div>
 
-<div style="margin-top:22px;">
-<button type="button"
-onclick="document.getElementById('gameHelp').style.display='flex'"
-style="width:100%;padding:17px;border:0;border-radius:18px;
-font-size:18px;font-weight:900;cursor:pointer;">
-📖 شرح اللعبة
-</button>
+<div id="gameHelp" class="modal" style="display:none;">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeGameHelp()">×</button>
+
+        <h2>📖 شرح اللعبة</h2>
+
+        <p>
+            أهلاً بيك ❤️
+            اللعبة عبارة عن أسئلة وتحديات، وتقدر تلعبها بروحك
+            أو مع شخص ثاني أونلاين.
+        </p>
+
+        <h3>🎮 لعب بروحي</h3>
+        <p>
+            لو ما عندكش شخص ثاني بيلعب معاك، اختار لعب بروحي.
+            اختار القسم والكرت وابدأ جاوب على الأسئلة وسجّل نقاطك.
+        </p>
+
+        <h3>🏠 إنشاء غرفة</h3>
+        <p>
+            لو تبي تلعب مع صاحبك، اختار إنشاء غرفة.
+            بعد ما تنشئ الغرفة بيطلعلك كود خاص،
+            ابعته لصاحبك باش ينضم معاك وتلعبوا أونلاين.
+        </p>
+
+        <h3>🔑 الانضمام للغرفة</h3>
+        <p>
+            لو صاحبك أنشأ غرفة وعطاك الكود،
+            اختار الانضمام للغرفة وحط الكود باش تدخل معاه.
+        </p>
+
+        <h3>⭐ النقاط</h3>
+        <p>
+            كل إجابة تقدر تسجل عليها نقاط حسب نظام اللعبة،
+            وفي النهاية تشوف مجموع نقاطك ونتيجتك.
+        </p>
+
+        <h3>🏆 النتيجة</h3>
+        <p>
+            بعد ما تكمل الكرت، اللعبة تعرضلك مجموع النقاط
+            والإجابات اللي سجلتها والنتيجة النهائية.
+        </p>
+
+        <button class="btn" onclick="closeGameHelp()">
+            ❤️ فهمت، سكّر الشرح
+        </button>
+    </div>
 </div>
 
 </main>
@@ -60,28 +158,6 @@ line-height:1.9;text-align:right;">
 
 <h2 style="text-align:center;">📖 كيف تلعب؟</h2>
 
-<p><strong>🎮 نلعب بروحي:</strong><br>
-لو تبي تلعب وحدك، اختار «نلعب بروحي»، وبعدها اختار القسم والكرت.
-بيطلعولك الأسئلة وحدة وحدة، جاوب عليها وشوف نقاطك في النهاية.</p>
-
-<p><strong>👥 نلعب مع حد:</strong><br>
-لو تبي تلعب مع صاحبك أو شخص ثاني، أنشئ غرفة واختار القسم والكرت.
-بعدها ابعث كود الغرفة للشخص الثاني وخشوا العبوا مع بعض.</p>
-
-<p><strong>❓ الأسئلة والنقاط:</strong><br>
-كل كرت فيه مجموعة أسئلة. اختار الإجابة المناسبة، والنقاط تتحسبلك حسب إجابتك.</p>
-
-<p><strong>🏆 النتيجة:</strong><br>
-بعد ما تكمل الكرت، تقدر تشوف مجموع نقاطك وترجع تختار كرت ثاني وتكمل اللعب.</p>
-
-<button type="button"
-onclick="document.getElementById('gameHelp').style.display='none'"
-style="width:100%;padding:14px;border:0;border-radius:16px;
-font-size:16px;font-weight:bold;cursor:pointer;">
-❤️ سكّر الشرح
-</button>
-
-</div>
 </div>
 
 <nav class="bottom-nav">
@@ -94,3 +170,23 @@ font-size:16px;font-weight:bold;cursor:pointer;">
 </div>
 </body>
 </html>
+
+
+<script>
+function openGameHelp() {
+    const modal = document.getElementById("gameHelp");
+    if (modal) modal.style.display = "flex";
+}
+
+function closeGameHelp() {
+    const modal = document.getElementById("gameHelp");
+    if (modal) modal.style.display = "none";
+}
+
+document.addEventListener("click", function(e) {
+    const modal = document.getElementById("gameHelp");
+    if (e.target === modal) {
+        closeGameHelp();
+    }
+});
+</script>
