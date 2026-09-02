@@ -1659,6 +1659,43 @@ def my_answers():
 with app.app_context():
     db.create_all()
 
+    # استيراد الأسئلة الأساسية إلى قاعدة Render عند الحاجة فقط
+    if os.environ.get("RENDER"):
+        try:
+            if Question.query.count() == 0:
+                source_db = Path(__file__).resolve().parent / "data" / "game.db"
+
+                if source_db.exists():
+                    import sqlite3
+
+                    source = sqlite3.connect(str(source_db))
+                    rows = source.execute("""
+                        SELECT id, category, card_number, question_number, text
+                        FROM question
+                        ORDER BY id
+                    """).fetchall()
+                    source.close()
+
+                    if rows:
+                        db.session.bulk_insert_mappings(
+                            Question,
+                            [
+                                {
+                                    "id": row[0],
+                                    "category": row[1],
+                                    "card_number": row[2],
+                                    "question_number": row[3],
+                                    "text": row[4],
+                                }
+                                for row in rows
+                            ]
+                        )
+                        db.session.commit()
+                        print(f"✅ Imported {len(rows)} questions")
+        except Exception as e:
+            db.session.rollback()
+            print(f"⚠️ Question import failed: {e}")
+
 
 
 # =========================================================
