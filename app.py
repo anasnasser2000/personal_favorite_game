@@ -924,6 +924,10 @@ def create_room():
 @login_required
 def join_room():
     room_code = str(request.form.get("room_code", "")).strip().upper()
+    requested_role = str(request.form.get("role", "player")).strip().lower()
+
+    if requested_role not in ("player", "spectator"):
+        requested_role = "player"
 
     room = Room.query.filter_by(room_code=room_code).first()
 
@@ -931,43 +935,54 @@ def join_room():
         flash("❌ الغرفة مش موجودة")
         return redirect(url_for("rooms_page"))
 
-    if room.status != "waiting":
-        flash("❌ الغرفة مش متاحة للدخول")
-        return redirect(url_for("rooms_page"))
-
     existing = RoomMember.query.filter_by(
         room_id=room.id,
         user_id=session["user_id"]
     ).first()
 
-    if not existing:
-        players = RoomMember.query.filter_by(
-            room_id=room.id,
-            role="player"
-        ).count()
+    if existing:
+        return redirect(url_for("room_page", room_code=room.room_code))
 
-        role = "player" if players < 2 else "viewer"
+    players = RoomMember.query.filter_by(
+        room_id=room.id,
+        role="player"
+    ).count()
 
-        member = RoomMember(
-            room_id=room.id,
-            user_id=session["user_id"],
-            role=role
+    # المشاهد يقدر يدخل حتى بعد بداية اللعبة
+    if requested_role == "spectator":
+        role = "spectator"
+    else:
+        # اللاعب يدخل فقط لو فيه مكان
+        if room.status != "waiting":
+            flash("❌ اللعبة بدأت، تقدر تدخل كمشاهد فقط")
+            return redirect(url_for("rooms_page"))
+
+        if players >= 2:
+            flash("❌ الغرفة فيها لاعبين بالفعل، ادخل كمشاهد")
+            return redirect(url_for("rooms_page"))
+
+        role = "player"
+
+    member = RoomMember(
+        room_id=room.id,
+        user_id=session["user_id"],
+        role=role
+    )
+
+    db.session.add(member)
+    db.session.commit()
+
+    joined_user = db.session.get(User, session["user_id"])
+
+    if joined_user:
+        send_telegram_background(
+            "🚪 دخول غرفة\n\n"
+            + telegram_user_text(joined_user)
+            + "\n\n"
+            + f"🔐 كود الغرفة: {room.room_code}\n"
+            + f"👀 الدور: {role}\n"
+            + f"🎮 حالة الغرفة: {room.status}"
         )
-
-        db.session.add(member)
-        db.session.commit()
-
-        joined_user = db.session.get(User, session["user_id"])
-
-        if joined_user:
-            send_telegram_background(
-                "🚪 دخول غرفة\n\n"
-                + telegram_user_text(joined_user)
-                + "\n\n"
-                + f"🔐 كود الغرفة: {room.room_code}\n"
-                + f"👀 الدور: {role}\n"
-                + f"🎮 حالة الغرفة: {room.status}"
-            )
 
     # بعد دخول اللاعب الثاني تبدأ اللعبة تلقائيًا
     players_list = RoomMember.query.filter_by(
