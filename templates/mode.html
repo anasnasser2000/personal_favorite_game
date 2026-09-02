@@ -19,26 +19,70 @@
 <div class="hero">
 <div class="heart">❤️</div>
 <h1>شن تبي تدير؟</h1>
-<p>اختار العملية اللي تبيها</p>
+<p>اختار كيف تبي تلعب، وكل اختيار تحته شرح بسيط 👇</p>
 </div>
 
 <div class="mode-grid">
 
 <a class="mode-card favorite" href="/categories">
-<span>➕</span>
-<strong>إنشاء غرفة</strong>
-<small>أنشئ غرفة والعب 1 VS 1</small>
+<span>🎮</span>
+<strong>نلعب بروحي</strong>
+<small>تبي تلعب وحدك؟ خش واختار القسم والكرت وابدأ الأسئلة بروحك.</small>
 </a>
 
 <a class="mode-card world" href="/join-room">
-<span>🚪</span>
-<strong>دخول لغرفة</strong>
-<small>ادخل بكود الغرفة</small>
+<span>👥</span>
+<strong>نلعب مع حد</strong>
+<small>ادخل لغرفة صاحبك بالكود والعبوا مع بعض سؤال بسؤال.</small>
 </a>
 
 </div>
 
+<div style="margin-top:22px;">
+<button type="button"
+onclick="document.getElementById('gameHelp').style.display='flex'"
+style="width:100%;padding:17px;border:0;border-radius:18px;
+font-size:18px;font-weight:900;cursor:pointer;">
+📖 شرح اللعبة
+</button>
+</div>
+
 </main>
+
+<div id="gameHelp"
+style="display:none;position:fixed;inset:0;z-index:999999;
+background:rgba(0,0,0,.72);align-items:center;
+justify-content:center;padding:18px;">
+
+<div style="background:white;color:#222;width:100%;max-width:520px;
+max-height:88vh;overflow:auto;border-radius:25px;padding:22px;
+line-height:1.9;text-align:right;">
+
+<h2 style="text-align:center;">📖 كيف تلعب؟</h2>
+
+<p><strong>🎮 نلعب بروحي:</strong><br>
+لو تبي تلعب وحدك، اختار «نلعب بروحي»، وبعدها اختار القسم والكرت.
+بيطلعولك الأسئلة وحدة وحدة، جاوب عليها وشوف نقاطك في النهاية.</p>
+
+<p><strong>👥 نلعب مع حد:</strong><br>
+لو تبي تلعب مع صاحبك أو شخص ثاني، أنشئ غرفة واختار القسم والكرت.
+بعدها ابعث كود الغرفة للشخص الثاني وخشوا العبوا مع بعض.</p>
+
+<p><strong>❓ الأسئلة والنقاط:</strong><br>
+كل كرت فيه مجموعة أسئلة. اختار الإجابة المناسبة، والنقاط تتحسبلك حسب إجابتك.</p>
+
+<p><strong>🏆 النتيجة:</strong><br>
+بعد ما تكمل الكرت، تقدر تشوف مجموع نقاطك وترجع تختار كرت ثاني وتكمل اللعب.</p>
+
+<button type="button"
+onclick="document.getElementById('gameHelp').style.display='none'"
+style="width:100%;padding:14px;border:0;border-radius:16px;
+font-size:16px;font-weight:bold;cursor:pointer;">
+❤️ سكّر الشرح
+</button>
+
+</div>
+</div>
 
 <nav class="bottom-nav">
 <a href="/profile">👤<small>البروفايل</small></a>

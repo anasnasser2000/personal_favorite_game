@@ -89,8 +89,8 @@ setInterval(updateBadges, 3000);
 
 <div class="hero">
 <div class="heart">❤️</div>
-<h1>جاهز نلعبوا؟ 🎮</h1>
-<p>اختار كيف تبي تلعب وابدأ على طول ❤️</p>
+<h1>جاهز للعب؟</h1>
+<p>اختار طريقة اللعب وابدأ</p>
 <a class="main-play" href="/mode">ابدأ اللعبة 🎮</a>
 </div>
 </main>

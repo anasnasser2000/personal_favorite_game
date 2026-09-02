@@ -703,6 +703,15 @@ body{
 const ROOM_CODE = "{{ room.room_code }}";
 const MY_ID = {{ session["user_id"] }};
 
+const MY_ROLE = {{ (
+    members
+    |selectattr("id", "equalto", session["user_id"])
+    |map(attribute="role")
+    |first
+    )|tojson }};
+
+const IS_SPECTATOR = MY_ROLE === "spectator";
+
 let lastPhase = "";
 let lastQuestion = 0;
 let lastResult = null;
@@ -931,6 +940,27 @@ function renderPhase(data){
 
     const turnText =
         document.getElementById("turnText");
+
+    // المشاهد يتفرج فقط، بدون إجابة أو تحكيم
+    if(IS_SPECTATOR){
+        answerArea.style.display = "none";
+        judging.style.display = "none";
+
+        if(turnText){
+            if(room.phase === "answering"){
+                turnText.textContent =
+                    "👀 أنت مشاهد — في انتظار إجابة اللاعب";
+            }else if(room.phase === "judging"){
+                turnText.textContent =
+                    "👀 أنت مشاهد — في انتظار الحكم";
+            }else{
+                turnText.textContent =
+                    "👀 أنت مشاهد";
+            }
+        }
+
+        return;
+    }
 
     const myTurn =
         room.turn_user_id === MY_ID;

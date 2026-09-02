@@ -19,5 +19,187 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js").catch(()=>{});
 }
 </script>
+
+<!-- LIVE GAME STATS -->
+<div id="live-game-stats" dir="rtl">
+    <div class="lgs-title">📊 إحصائيات اللعبة</div>
+
+    <div class="lgs-row">
+        <span>👥 الزوار</span>
+        <b id="lgs-visitors">0</b>
+    </div>
+
+    <div class="lgs-row">
+        <span>🎮 اللاعبين</span>
+        <b id="lgs-players">0</b>
+    </div>
+
+    <div class="lgs-row">
+        <span>🕹️ مرات اللعب</span>
+        <b id="lgs-games">0</b>
+    </div>
+
+    <div class="lgs-row">
+        <span>⭐ مجموع النقاط</span>
+        <b id="lgs-points">0</b>
+    </div>
+
+    <div class="lgs-row">
+        <span>🏆 أعلى لاعب</span>
+        <b id="lgs-top-user">—</b>
+    </div>
+
+    <div class="lgs-row">
+        <span>🔥 أعلى نقاط</span>
+        <b id="lgs-top-score">0</b>
+    </div>
+</div>
+
+<style>
+#live-game-stats {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999999;
+    width: 210px;
+    padding: 13px;
+    border-radius: 16px;
+    background: rgba(20,20,30,.94);
+    color: #fff;
+    box-shadow: 0 8px 30px rgba(0,0,0,.30);
+    backdrop-filter: blur(10px);
+    font-family: Arial, sans-serif;
+}
+
+#live-game-stats .lgs-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 9px;
+    text-align: center;
+}
+
+#live-game-stats .lgs-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-top: 1px solid rgba(255,255,255,.10);
+    font-size: 12px;
+}
+
+#live-game-stats .lgs-row b {
+    color: #ffd166;
+    max-width: 105px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    #live-game-stats {
+        top: 8px;
+        right: 8px;
+        width: 175px;
+        padding: 9px;
+    }
+
+    #live-game-stats .lgs-row {
+        font-size: 11px;
+        padding: 4px 0;
+    }
+
+    #live-game-stats .lgs-title {
+        font-size: 13px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const key = "personal_favorite_game_visitor_id";
+
+    let visitorId = localStorage.getItem(key);
+
+    if (!visitorId) {
+        visitorId =
+            crypto.randomUUID
+                ? crypto.randomUUID()
+                : Date.now() + "-" + Math.random();
+
+        localStorage.setItem(key, visitorId);
+    }
+
+    async function updateLiveStats() {
+        try {
+            const response = await fetch(
+                "/api/live-stats?visitor_id=" +
+                encodeURIComponent(visitorId),
+                { cache: "no-store" }
+            );
+
+            if (!response.ok) return;
+
+            const d = await response.json();
+
+            document.getElementById("lgs-visitors").textContent =
+                Number(d.visitors || 0).toLocaleString();
+
+            document.getElementById("lgs-players").textContent =
+                Number(d.players || 0).toLocaleString();
+
+            document.getElementById("lgs-games").textContent =
+                Number(d.games || 0).toLocaleString();
+
+            document.getElementById("lgs-points").textContent =
+                Number(d.total_points || 0).toLocaleString();
+
+            document.getElementById("lgs-top-user").textContent =
+                d.top_user || "—";
+
+            document.getElementById("lgs-top-score").textContent =
+                Number(d.top_score || 0).toLocaleString();
+
+        } catch (e) {
+            console.log("Live stats:", e);
+        }
+    }
+
+    updateLiveStats();
+
+    // تحديث مستمر بدون إخفاء اللوحة
+    setInterval(updateLiveStats, 10000);
+})();
+</script>
+<!-- END LIVE GAME STATS -->
+
+
+<script>
+/* LIVE_GAME_PLAY_COUNTER */
+(function () {
+    const key = "personal_favorite_game_visitor_id";
+    const sessionKey = "personal_favorite_game_play_started";
+
+    let visitorId = localStorage.getItem(key);
+    if (!visitorId) return;
+
+    // نسجل بداية اللعب مرة واحدة في كل جلسة صفحة
+    if (!sessionStorage.getItem(sessionKey)) {
+        sessionStorage.setItem(sessionKey, "1");
+
+        fetch(
+            "/api/live-stats?visitor_id=" +
+            encodeURIComponent(visitorId) +
+            "&play=1",
+            {
+                method: "GET",
+                cache: "no-store",
+                keepalive: true
+            }
+        ).catch(() => {});
+    }
+})();
+</script>
+
 </body>
 </html>
